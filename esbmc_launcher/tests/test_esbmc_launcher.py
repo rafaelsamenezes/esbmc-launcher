@@ -6,7 +6,7 @@ import pytest
 
 from click.testing import CliRunner
 
-from esbmc_launcher import esbmc_launcher
+from esbmc_launcher import esbmc
 from esbmc_launcher import cli
 
 
