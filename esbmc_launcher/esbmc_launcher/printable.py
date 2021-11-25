@@ -2,7 +2,7 @@
 
 from rich.console import Console
 from rich.style import Style
-
+from functools import partial
 
 class Message:
 
@@ -26,26 +26,16 @@ class Message:
     console = Console()
 
     @staticmethod
-    def print(msg: str, mode):
-        Message.console.log(msg, style=mode)
+    def print(mode, msg: str):
+        Message.console.print(msg, style=mode)
 
     @staticmethod
-    def error(msg: str):
-        Message.print(msg, Message.error_style)
+    def getlog(mode):
+        return partial(Message.print, mode)
 
-    @staticmethod
-    def warning(msg: str):
-        Message.print(msg, Message.warning_style)
-
-    @staticmethod
-    def status(msg: str):
-        Message.print(msg, Message.status_style)
-
-    @staticmethod
-    def debug(msg: str):
-        Message.print(msg, Message.debug_style)
-
-    @staticmethod
-    def verbose(msg: str):
-        Message.print(msg, Message.verbose_style)
+error = Message.getlog(Message.error_style)
+warning = Message.getlog(Message.warning_style)
+status =  Message.getlog(Message.status_style)
+debug =Message.getlog(Message.debug_style)
+verbose = Message.getlog(Message.verbose_style)
 

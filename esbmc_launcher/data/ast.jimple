@@ -1,0 +1,147 @@
+{
+    "object": "Class",
+    "modifiers": [
+        "public"
+    ],
+    "name": "MainKt",
+    "extends": "java.lang.Object",
+    "content": [
+        {
+            "object": "Method",
+            "modifiers": [
+                "public",
+                "static"
+            ],
+            "type": {
+                "identifier": "int",
+                "dimensions": 0,
+                "mode": "basic"
+            },
+            "name": "main",
+            "parameters": [] ,
+            "content": [
+                {
+                    "object": "Variable",
+                    "name": "x",
+                    "type": {
+                        "identifier": "int",
+                        "dimensions": 0,
+                        "mode": "basic"
+                    }
+                },
+                {
+                    "object": "Variable",
+                    "name": "y",
+                    "type": {
+                        "identifier": "int",
+                        "dimensions": 0,
+                        "mode": "basic"
+                    }
+                },
+                {
+                    "object": "SetVariable",
+                    "name": "x",
+                    "value": {
+                        "expr_type": "constant",
+                        "value": "0"
+                    }
+                },
+                {
+                    "object": "SetVariable",
+                    "name": "y",
+                    "value": {
+                        "expr_type": "constant",
+                        "value": "1"
+                    }
+                },
+                {
+                    "object": "label",
+                    "label": "label1"
+                },
+                {
+                    "object": "if",
+                    "goto": "label2",
+                    "cond": {
+                        "expr_type": "binop",
+                        "operator": ">=",
+                        "lhs": {
+                            "expr_type": "symbol",
+                            "value": "x"
+                        },
+                        "rhs": {
+                            "expr_type": "constant",
+                            "value": "20"
+                        }
+                    }
+                },
+                {
+                    "object": "SetVariable",
+                    "name": "y",
+                    "value": {
+                        "expr_type": "binop",
+                        "operator": "+",
+                        "lhs": {
+                            "expr_type": "symbol",
+                            "value": "x"
+                        },
+                        "rhs": {
+                            "expr_type": "symbol",
+                            "value": "y"
+                        }
+                    }
+                },
+                {
+                    "object": "SetVariable",
+                    "name": "x",
+                    "value": {
+                        "expr_type": "binop",
+                        "operator": "+",
+                        "lhs": {
+                            "expr_type": "symbol",
+                            "value": "x"
+                        },
+                        "rhs": {
+                            "expr_type": "constant",
+                            "value": "1"
+                        }
+                    }
+                },
+                {
+                    "object": "goto",
+                    "goto": "label1"
+                },
+                {
+                    "object": "label",
+                    "label": "label2"
+                },
+                {
+                    "object": "if",
+                    "goto": "label3",
+                    "cond": {
+                        "expr_type": "binop",
+                        "operator": "<=",
+                        "lhs": {
+                            "expr_type": "symbol",
+                            "value": "y"
+                        },
+                        "rhs": {
+                            "expr_type": "symbol",
+                            "value": "x"
+                        }
+                    }
+                },
+                {
+                    "object": "throw",
+                    "expr": {
+                        "expr_type": "constant",
+                        "value": "1"
+                    }
+                },
+                {
+                    "object": "label",
+                    "label": "label3"
+                }
+            ]
+        }
+    ]
+}

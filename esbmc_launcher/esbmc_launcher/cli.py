@@ -3,17 +3,18 @@ import sys
 import click
 from soot_wrapper import SootWrapper
 from esbmc import EsbmcLauncher
-from printable import Message
+import printable
 from download import download
+import utils
 
 
 def check_soot():
-    Message.verbose("Checking requirements")
+    printable.verbose("Checking requirements")
     SootWrapper.check_requirements()
 
 
 def download_dependencies():
-    Message.verbose("Downloading dependencies")
+    printable.verbose("Downloading dependencies")
     download([SootWrapper.get_soot_link(), EsbmcLauncher.get_esbmc()], ".")
 
 
@@ -24,7 +25,7 @@ def download_dependencies():
 @click.option('--soot-path', default="soot.jar", help="Soot jar path")
 @click.argument('inputs', nargs=-1)
 def cli(doctor, esbmc_path, soot_path, get_dependencies, inputs):
-    Message.status("Starting ESBMC Launcher")
+    printable.status("Starting ESBMC Launcher")
     if get_dependencies:
         download_dependencies()
         return 0
@@ -32,10 +33,17 @@ def cli(doctor, esbmc_path, soot_path, get_dependencies, inputs):
         check_soot()
         return 0
 
-    Message.debug(f"Inputs: {inputs}")
-    # TODO: select mode
-    sootWrapper = SootWrapper()
-    sootWrapper.generate_jimple(inputs)
+    printable.debug(f"Inputs: {inputs}")
+    if len(inputs) == 0:
+        printable.error("Didn't receive any file inputs (expecting .c, .java, .kt or .apk)")
+        return -1
+    
+    if utils.Mode.getmode(inputs[0]) == utils.Mode.KT_FILE:
+        sootWrapper = SootWrapper()
+        sootWrapper.generate_jimple(inputs)
+
+    from subprocess import run
+    run(["../esbmc/esbmc.exe", "--incremental-bmc", "ast.jimple"])
 
 if __name__ == "__main__":
     sys.exit(cli())  # pragma: no cover

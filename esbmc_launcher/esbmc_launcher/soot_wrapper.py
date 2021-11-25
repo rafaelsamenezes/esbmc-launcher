@@ -1,8 +1,9 @@
 """Converts java/kotlin/apk into a jimple file"""
 
+from esbmc_launcher.jimple_to_json import StubConverter
 import utils
 from subprocess import run
-from printable import Message
+import printable
 
 class SootWrapper:
 
@@ -18,7 +19,7 @@ class SootWrapper:
         input = [javac]
         for x in files:
             input.append(x)
-        Message.debug(f"Javac: {input}")
+        printable.debug(f"Javac: {input}")
         run(input)
 
     def _extract_jimple(self, files):
@@ -31,17 +32,41 @@ class SootWrapper:
             import os
             absolute = os.path.abspath(x)
             filename = os.path.basename(absolute)
-            input.append(os.path.splitext(filename)[0])
-        Message.debug(f"Soot: {input}")
+            input.append(os.path.splitext(filename)[0] + "Kt")
+        printable.debug(f"Soot: {input}")
         run(input, cwd="../data")
 
     def generate_jimple(self, files):
         # TODO: This will be put into the tmp dir
-        Message.status(f"Generating Jimple from: {files}")
-        self._compile_java_file(files)
+        printable.status(f"Generating Jimple from: {files}")
+        self._compile_kotlin_file(files)
         self._extract_jimple(files)
+        for x in files:
+            StubConverter().generate_json(x, x)
 
 
+    def _compile_kotlin_file(self, files):
+        kotlinc = utils.is_available("kotlinc")
+        if not kotlinc:
+            raise ValueError("Expecting kotlinc in path")
+
+        input = [kotlinc, "-include-runtime"]
+        for x in files:
+            input.append(x)
+
+        input.append("-d")
+        input.append("output.jar")
+        printable.debug(f"kotlinc: {input}")
+        run(input)
+
+        jar = utils.is_available("jar")
+        if not jar:
+            raise ValueError("Expecting jar in path")
+
+        input = [jar, "xf", "output.jar"]
+        run(input)
+        
+    
     @staticmethod
     def check_requirements(is_warning=True):
         SootWrapper.check_javac(is_warning)
@@ -51,9 +76,9 @@ class SootWrapper:
 
     @staticmethod
     def check_javac(just_warning: bool) -> bool:
-        warning = Message.warning if just_warning else Message.error
+        warning = printable.warning if just_warning else printable.error
         if utils.is_available("javac"):
-            Message.status("Found javac, support for .java files is OK")
+            printable.status("Found javac, support for .java files is OK")
             return True
         else:
             warning("Couldn't find javac, .java files are disabled")
@@ -61,9 +86,9 @@ class SootWrapper:
 
     @staticmethod
     def check_kolinc(just_warning: bool) -> bool:
-        warning = Message.warning if just_warning else Message.error
+        warning = printable.warning if just_warning else printable.error
         if utils.is_available("kotlinc"):
-            Message.status("Found kotlinc, support for .kt files is OK")
+            printable.status("Found kotlinc, support for .kt files is OK")
             return True
         else:
             warning("Couldn't find kotlinc, .kt files are disabled")
@@ -71,9 +96,9 @@ class SootWrapper:
 
     @staticmethod
     def check_java(just_warning: bool) -> bool:
-        warning = Message.warning if just_warning else Message.error
+        warning = printable.warning if just_warning else printable.error
         if utils.is_available("java"):
-            Message.status("Found java")
+            printable.status("Found java")
             return True
         else:
             warning("Couldn't find java, this is required for Soot")

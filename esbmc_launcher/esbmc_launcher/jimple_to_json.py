@@ -1,6 +1,6 @@
 """Converts .jimple into a json to be later used by ESBMC"""
 
-from printable import Message
+import printable
 
 class JimpleToJson:
     """Jimple convertion methods"""
@@ -14,4 +14,4 @@ class StubConverter(JimpleToJson):
 
     def generate_json(self, origin: str, destiny: str):
         """Lets pretend that a conversion happened"""
-        Message.status("Generating AST from Jimple file...")
+        printable.status(f"Generating AST from Jimple file: {origin}")
